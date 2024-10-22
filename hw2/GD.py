@@ -1,13 +1,15 @@
 import random
 import numpy as np
-import numpy.linalg as linalg
 import pandas as pd
 
 def gradient(A:np.array, b:np.array, x:np.array):
+    return 2 * np.dot(A.T, (np.dot(A, x) - b))
+
     return 2 * np.dot((np.dot(A, x) - b).T, A)
 
 def learning_rate(A:np.array):
-    return np.dot(A.T, A) * 0.5
+    # 0.012774369968774082
+    return abs(0.5 / np.linalg.norm(A))
 
 def get_A(file='HW2_ellipse.csv'):
     df = pd.read_csv(file)
@@ -21,35 +23,34 @@ def get_A(file='HW2_ellipse.csv'):
     return A
 
 def print_result(A:np.array, b:np.array, x:np.array, dim:int=999):
-    print("X värde : ")
-    print(x, "\n\n")
-    print("Function-value : ", function(A, b, x))
+    print("\nX värde : ", x, "\n")
+    print("Function-value : ", function(A, b, x), "\n")
     
-
-def get_b(dim=999):
-    return np.array([1 for _ in range(dim)])
-
 def function(A:np.array, b:np.array, x:np.array, dim:int=999):
     sum = 0
     for i in range(dim):
         sum += (A[i][0] * x[0] + A[i][1] * x[1] - 1) ** 2
     return sum
 
-def found_min(x:np.array, stop_criteria=1e-10):
+def found_min(x:np.array, stop_criteria=1e-1):
     for value in x:
-        if value > stop_criteria:
+        if abs(value) > stop_criteria:
             return False
     return True
+    return True not in {(value > stop_criteria) for value in x}
 
 
 dim = 999
-x = np.array([random.uniform(0, 20) for _ in range(2)])
-stop = True
-A = np.array([[random.uniform(0, 20) for _ in range(2)] for _ in range(dim)])
+x = np.array([random.uniform(0, 200) for _ in range(2)])
+A = get_A()
 b = np.array([1 for _ in range(dim)])
 
+while np.linalg.norm(gradient(A, b, x)) > 10000:
+    print(x)
+    print(learning_rate(A))
+    print(gradient(A, b, x))
+    print()
 
-while found_min(gradient(A, b, x)):
-    x -= learning_rate(A)
+    x -= learning_rate(A) * gradient(A, b, x)
 
 print_result(A, b, x)
