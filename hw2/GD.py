@@ -43,8 +43,9 @@ def main():
     x = np.array([random.uniform(0, 1) for _ in range(2)])
     A = get_A()
     b = np.array([1 for _ in range(dim)])
+    stopping_criteria = 1e-6
 
-    while np.linalg.norm(gradient(A, b, x)) > 1e-5:
+    while np.linalg.norm(gradient(A, b, x)) > stopping_criteria:
         x -= learning_rate(A) * gradient(A, b, x)
     print_result(A, b, x)
 
