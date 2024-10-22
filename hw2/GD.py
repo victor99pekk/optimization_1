@@ -3,19 +3,15 @@ import numpy as np
 import pandas as pd
 
 
-
-
 def gradient(A:np.array, b:np.array, x:np.array):
-    # return 2 * np.dot(A.T, (np.dot(A, x) - b))
     sum1 = 0
     sum2 = 0
     for i in range(999):
-        inner_product = (A[i][0] * x[0] + A[i][1] * x[1] - 1)
-        sum1 += 2 * inner_product * A[i][0]
-        sum2 += 2 * inner_product * A[i][1]
+        inner_term = (A[i][0] * x[0] + A[i][1] * x[1] - 1)
+        sum1 += 2 * inner_term * A[i][0]
+        sum2 += 2 * inner_term * A[i][1]
     return np.array([sum1 / 999, sum2 / 999])
-
-    return 2 * np.dot((np.dot(A, x) - b).T, A)
+    # return 2 * np.dot((np.dot(A, x) - b).T, A)
 
 def learning_rate(A:np.array):
     # 0.012774369968774082
@@ -42,23 +38,17 @@ def function(A:np.array, b:np.array, x:np.array, dim:int=999):
         sum += (A[i][0] * x[0] + A[i][1] * x[1] - 1) ** 2
     return sum
 
+def main():
+    dim = 999
+    x = np.array([random.uniform(0, 1) for _ in range(2)])
+    A = get_A()
+    b = np.array([1 for _ in range(dim)])
 
-dim = 999
-x = np.array([random.uniform(0, 1) for _ in range(2)])
-A = get_A()
-b = np.array([1 for _ in range(dim)])
-
-# print(function(A, b, x), x)
-# print(gradient(A, b, x), "\n")
-# x -= learning_rate(A) * gradient(A, b, x)
-# print(function(A, b, x), x, "\n")
+    while np.linalg.norm(gradient(A, b, x)) > 1e-5:
+        x -= learning_rate(A) * gradient(A, b, x)
+    print_result(A, b, x)
 
 
-while np.linalg.norm(gradient(A, b, x)) > 1e-5:
-    # print(function(A, b, x))
-    # print(x)
-    # print(learning_rate(A) * gradient(A, b, x))
-    x -= learning_rate(A) * gradient(A, b, x)
-    # print(x, "\n")
 
-print_result(A, b, x)
+if __name__ == "__main__":
+    main()
