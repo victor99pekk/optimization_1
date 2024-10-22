@@ -1,4 +1,5 @@
 import random
+from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -38,16 +39,48 @@ def function(A:np.array, b:np.array, x:np.array, dim:int=999):
         sum += (A[i][0] * x[0] + A[i][1] * x[1] - 1) ** 2
     return sum
 
+def plot_ellipse(x: np.array, file:str='HW2_ellipse.csv'):
+    # Ensure a has two elements
+    # Scatter plot from the file
+    df = pd.read_csv(file)
+    df.columns = ['x', 'y']
+    scatter_x = df['x']
+    scatter_y = df['y']
+    plt.scatter(scatter_x, scatter_y, label='Data Points')
+
+    assert len(x) == 2, "Parameter array must have exactly two elements."
+
+    a1, a2 = x
+
+    # Generate points for the ellipse
+    theta = np.linspace(0, 2 * np.pi, 100)
+    ellipse_x = np.cos(theta) / np.sqrt(a1)
+    ellipse_y = np.sin(theta) / np.sqrt(a2)
+
+    # Plot the ellipse
+    # plt.figure()
+    plt.plot(ellipse_x, ellipse_y, color='red', label=f'Ellipse: {a1:.2f}x^2 + {a2:.2f}y^2 = 1')
+
+
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('Ellipse and Data Points')
+    plt.legend()
+    plt.axis('equal')
+    plt.grid(True)
+    plt.show()
+
 def main():
     dim = 999
     x = np.array([random.uniform(0, 1) for _ in range(2)])
     A = get_A()
     b = np.array([1 for _ in range(dim)])
-    stopping_criteria = 1e-6
+    stopping_criteria = 1e-5
 
     while np.linalg.norm(gradient(A, b, x)) > stopping_criteria:
         x -= learning_rate(A) * gradient(A, b, x)
     print_result(A, b, x)
+    plot_ellipse(x)
 
 
 
