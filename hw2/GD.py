@@ -2,8 +2,17 @@ import random
 import numpy as np
 import pandas as pd
 
+
+
 def gradient(A:np.array, b:np.array, x:np.array):
     # return 2 * np.dot(A.T, (np.dot(A, x) - b))
+
+    sum1 = 0
+    sum2 = 0
+    for i in range(999):
+        sum1 = 4 * ((A[i][0]*x[0] + A[i][1]*x[1]-1)**2) * A[i][0]*x[0]
+        sum2 = 4 * ((A[i][0]*x[0] + A[i][1]*x[1]-1)**2) * A[i][1]*x[1]
+    return np.array([sum1, sum2])
 
     return 2 * np.dot((np.dot(A, x) - b).T, A)
 
@@ -38,8 +47,11 @@ x = np.array([random.uniform(0, 1) for _ in range(2)])
 A = get_A()
 b = np.array([1 for _ in range(dim)])
 
-# while np.linalg.norm(gradient(A, b, x)) > 1e-2:
-for i in range(10):
+while np.linalg.norm(gradient(A, b, x)) > 1e-3:
+    print(function(A, b, x))
+    print(x)
+    print(learning_rate(A) * gradient(A, b, x))
     x -= learning_rate(A) * gradient(A, b, x)
+    print(x, "\n")
 
 print_result(A, b, x)
